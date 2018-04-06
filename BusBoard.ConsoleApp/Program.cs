@@ -8,6 +8,7 @@ namespace BusBoard.ConsoleApp
 {
     class Program
     {
+        private PostCodeAPI postCodeApi;
         static void Main(string[] args)
         {
             new Program().StartProgram();
@@ -15,6 +16,11 @@ namespace BusBoard.ConsoleApp
 
         private void StartProgram()
         {
+            postCodeApi = new PostCodeAPI();
+
+            var postcode = Console.ReadLine();
+            postCodeApi.CallPostCodeApi(postcode);
+
             var userBusStopInput = BusStopInput();
             int userNumberOfBuses = NumberOfBusesInput();
             
