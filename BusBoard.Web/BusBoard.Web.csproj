@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -207,6 +208,16 @@
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BusBoard.Api\BusBoard.Api.csproj">
+      <Project>{904861a6-1fe9-42c1-b7b3-9fa42bab5df1}</Project>
+      <Name>BusBoard.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BusBoard.ConsoleApp\BusBoard.ConsoleApp.csproj">
+      <Project>{446A6CF9-D6EC-49A6-8AD1-F52E1DDA4230}</Project>
+      <Name>BusBoard.ConsoleApp</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -221,7 +232,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>12396</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

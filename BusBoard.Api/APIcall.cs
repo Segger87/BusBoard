@@ -30,15 +30,12 @@ namespace BusBoard.Api
             {
                 var naptanIdReference = stopPoint.LineGroup.ElementAt(0).NaptanIdReference;
                 naptanIds.Add(naptanIdReference);
-                Console.WriteLine("Your nearest 2 StopPoint ID's are " + naptanIdReference + " Which is called " +
-                    stopPoint.CommonName + " and it is located " + stopPoint.Distance + " meters away");
                 i++;
                 if (i == 2)
                 {
                     break;
                 }
             }
-            Console.ReadLine();
 
             return naptanIds;
         }
@@ -55,25 +52,27 @@ namespace BusBoard.Api
                 var busArrivalsResponse = Client.Execute<List<BusArrival>>(request);
                 buses = buses.Concat(busArrivalsResponse.Data).ToList(); // concatenates seperate lists into one
             }
-            return buses;
+            List<BusArrival> sortedList = buses.OrderBy(o => o.ExpectedArrival).ToList();
+
+            return sortedList;
         }
 
-        public void PrintResult(int UserNumberOfBuses, List<BusArrival> busList)
-        {
-            var totalBuses = busList.Count;
-            if (UserNumberOfBuses > totalBuses)
-            {
-                UserNumberOfBuses = totalBuses;
-                Console.WriteLine("Sorry Bruv I will give you " + UserNumberOfBuses + " instead");
-            }
+        //public void PrintResult(int UserNumberOfBuses, List<BusArrival> busList)
+        //{
+        //    var totalBuses = busList.Count;
+        //    if (UserNumberOfBuses > totalBuses)
+        //    {
+        //        UserNumberOfBuses = totalBuses;
+        //        Console.WriteLine("Sorry Bruv I will give you " + UserNumberOfBuses + " instead");
+        //    }
 
-            List<BusArrival> SortedList = busList.OrderBy(o => o.ExpectedArrival).ToList();
+        //    List<BusArrival> SortedList = busList.OrderBy(o => o.ExpectedArrival).ToList();
 
-            for (int i = 0; i < UserNumberOfBuses; i++)
-            {
-                Console.WriteLine("The following bus with the ID " + UserNumberOfBuses + SortedList.ElementAt(i).VehicleId + " will be arriving at " + SortedList.ElementAt(i).ExpectedArrival.ToLocalTime().TimeOfDay);
-            }
-            Console.ReadLine();
-        }
+        //    for (int i = 0; i < UserNumberOfBuses; i++)
+        //    {
+        //        Console.WriteLine("The following bus with the ID " + UserNumberOfBuses + SortedList.ElementAt(i).VehicleId + " will be arriving at " + SortedList.ElementAt(i).ExpectedArrival.ToLocalTime().TimeOfDay);
+        //    }
+        //    Console.ReadLine();
+        //}
     }
 }

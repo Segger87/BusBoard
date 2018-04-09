@@ -1,4 +1,4 @@
-﻿@model BusBoard.Web.ViewModels.BusInfo
+﻿@model BusBoard.Web.ViewModels.BusInfoDisplay
 @{
   ViewBag.Title = "Bus Information";
 }
@@ -6,5 +6,12 @@
 <h2>BusInfo</h2>
 
 <div class="row">
-    <p>You entered postcode @Model.PostCode</p>
+    <p>The Following buses are coming up for you: </p>
+    @foreach (var busArrival in Model.BusArrivals)
+    {
+        <p>
+            <span>@busArrival.VehicleId</span>
+            <span>@busArrival.ExpectedArrival</span>
+        </p>
+    }
 </div>

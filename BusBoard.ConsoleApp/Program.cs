@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using BusBoard.Api;
 
 namespace BusBoard.ConsoleApp
 {
-    class Program
+    public class Program
     {
-        //private APIcall apiCall;
+
         static void Main(string[] args)
         {
             new Program().StartProgram();
@@ -26,7 +28,35 @@ namespace BusBoard.ConsoleApp
             var busList = apiCall.CallTflApi(userLatLong);
             var naptanIds = apiCall.PrintStopPointId(busList);
             var busArrivals = apiCall.GetUpComingBuses(naptanIds);
-            apiCall.PrintResult(userNumberOfBuses, busArrivals);
+        }
+
+        public List<BusArrival> CheckPostcodeRegEx(string postcode)
+        {
+            string regexp = "([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|" +
+          "(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z]" +
+          @"[0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z]))))\s?[0-9][A-Za-z]{2})";
+            Match match = Regex.Match(postcode, regexp);
+            if (match.Success)
+            {
+                return BusArrivalsFromPostcode(postcode);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public List<BusArrival> BusArrivalsFromPostcode(string postcode)
+        {
+
+                var postCodeApi = new PostCodeAPI();
+                var apiCall = new APIcall();
+                var userLatLong = postCodeApi.GetLatLong(postcode);
+
+                var busList = apiCall.CallTflApi(userLatLong);
+                var naptanIds = apiCall.PrintStopPointId(busList);
+                var busArrivals = apiCall.GetUpComingBuses(naptanIds);
+
+                return busArrivals;
         }
 
         //private string BusStopInput()
