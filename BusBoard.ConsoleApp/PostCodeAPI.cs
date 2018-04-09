@@ -10,21 +10,47 @@ namespace BusBoard.ConsoleApp
 {
     class PostCodeAPI
     {
-        
+        //public void CallPostCodeApi(string postcode)
+        //{
+        //    ServicePointManager.Expect100Continue = true;
+        //    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        //    var Client = new RestClient("http://api.postcodes.io/");
+        //    var request = new RestRequest("postcodes/" + postcode, Method.GET);
+        //    var getPostCodeData = Client.Execute<PostCodeAPIResponse>(request);
+        //    var userLongitude = getPostCodeData.Data.Result.Longitude;
+        //    var userLatitude = getPostCodeData.Data.Result.Latitude;
 
-        public void CallPostCodeApi(string postcode)
+        //    Console.WriteLine(getPostCodeData.Data.Result.Postcode + " " + userLongitude + " " + userLatitude);
+
+        //    Console.ReadLine();
+        //}
+
+        public string GetLatitude(string postcode)
         {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             var Client = new RestClient("http://api.postcodes.io/");
             var request = new RestRequest("postcodes/" + postcode, Method.GET);
             var getPostCodeData = Client.Execute<PostCodeAPIResponse>(request);
+            var userLatitude = getPostCodeData.Data.Result.Latitude;
+            Console.WriteLine(userLatitude);
 
-            Console.WriteLine(getPostCodeData.Data.Result.Postcode);
-       
-            Console.ReadLine();
+            return userLatitude;
+        }
+        public string GetLongitude(string postcode)
+        {
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            var Client = new RestClient("http://api.postcodes.io/");
+            var request = new RestRequest("postcodes/" + postcode, Method.GET);
+            var getPostCodeData = Client.Execute<PostCodeAPIResponse>(request);
+            var userLatitude = getPostCodeData.Data.Result.Longitude;
+            Console.WriteLine(userLatitude);
+
+            return userLatitude;
         }
     }
+
 
     public class PostCodeAPIResponse
     {
