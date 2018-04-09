@@ -18,33 +18,32 @@ namespace BusBoard.ConsoleApp
         {
             postCodeApi = new PostCodeAPI();
 
+            Console.WriteLine("Please enter a postcode: ");
             var postcode = Console.ReadLine();
-    
-            //postCodeApi.CallPostCodeApi(postcode);
-            string userLatitude = postCodeApi.GetLatitude(postcode);
-            string userLongitude = postCodeApi.GetLongitude(postcode);
 
-            var userBusStopInput = BusStopInput();
+            var userLatLong = postCodeApi.GetLatLong(postcode);
+
+            //var userBusStopInput = BusStopInput();
             int userNumberOfBuses = NumberOfBusesInput();
-            
-            var busList = CallTflApi(userLongitude, userLatitude);
-            var orderedBuses = AddBusesInList(busList);
-            PrintStopPointId(orderedBuses);
-           // PrintResult(userNumberOfBuses, orderedBuses);
+
+            var busList = CallTflApi(userLatLong);
+            var naptanIds = PrintStopPointId(busList);
+            var busArrivals = GetUpComingBuses(naptanIds);
+            PrintResult(userNumberOfBuses, busArrivals);
         }
 
-        private string BusStopInput()
-        {
-            string busStopInput;
-            do
-            {
-                Console.WriteLine("Which stopcode do you want to know the bus time for?");
-                busStopInput = Console.ReadLine();
-            } while (!BusStopInputInputIsValid(busStopInput));
-            return busStopInput;
-        }
+        //private string BusStopInput()
+        //{
+        //    string busStopInput;
+        //    do
+        //    {
+        //        Console.WriteLine("Which stopcode do you want to know the bus time for?");
+        //        busStopInput = Console.ReadLine();
+        //    } while (!BusStopInputInputIsValid(busStopInput));
+        //    return busStopInput;
+        //}
 
-            private bool BusStopInputInputIsValid(string needsinput)
+        private bool BusStopInputInputIsValid(string needsinput)
         {
             //Lookup into reg exp to find out valid stop codes
             return true;
@@ -63,63 +62,81 @@ namespace BusBoard.ConsoleApp
 
         private bool NumberOfBusesInputIsValid(string userInput)
         {
-            if (int.TryParse(userInput, out int n)) {
+            if (int.TryParse(userInput, out int n))
+            {
                 // todo now if else on it being more than 0
                 return true;
-            } else {
+            }
+            else
+            {
                 // todo tell user its not a string
                 return false;
             };
         }
 
-        public IRestResponse<List<BusPointId>> CallTflApi(string userLongitude, string userLatitude)
+        public BusPointId CallTflApi(LatLong latLong)
         {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            var findStopPoint = "StopPoint?stopTypes=NaptanOnstreetBusCoachStopPair&radius=500&lat=" + userLatitude + "&lon=" + userLongitude;
+            var findStopPoint = "StopPoint?stopTypes=NaptanOnstreetBusCoachStopPair&radius=500&lat=" + latLong.Latitude + "&lon=" + latLong.Longitude;
             var Client = new RestClient("https://api.tfl.gov.uk/");
             var request = new RestRequest(findStopPoint, Method.GET);
-            var getBusData = Client.Execute<List<BusPointId>>(request);
+            var getBusData = Client.Execute<BusPointId>(request);
 
-            return getBusData;
+            return getBusData.Data;
         }
 
-        public List<BusPointId> AddBusesInList(IRestResponse<List<BusPointId>> getBusData)
+        public List<string> PrintStopPointId(BusPointId busList)
         {
-            var busList = new List<BusPointId>();
+            List<string> naptanIds = new List<string>();
 
-            foreach (var buses in getBusData.Data)
+            int i = 0;
+            foreach (var stopPoint in busList.StopPoints)
             {
-                busList.Add(buses);
-            }
-            return busList;
-        }
-
-        public void PrintStopPointId(List<BusPointId> busList)
-        {
-            for (int i = 0; i < busList.Count; i++)
-            {
-                Console.WriteLine("Your StopPoint ID is" + busList.ElementAt(i).StopPoints + busList.ElementAt(i).NaptanId);
+                var naptanIdReference = stopPoint.LineGroup.ElementAt(0).NaptanIdReference;
+                naptanIds.Add(naptanIdReference);
+                Console.WriteLine("Your nearest 2 StopPoint ID's are " + naptanIdReference + " Which is called " + 
+                    stopPoint.CommonName + " and it is located " + stopPoint.Distance + " meters away");
+                i++;
+                if(i == 2)
+                {
+                    break;
+                }
             }
             Console.ReadLine();
+
+            return naptanIds;
         }
 
-        public void PrintResult(int UserNumberOfBuses, List<BusArrivals> busList)
+        public List<BusArrival> GetUpComingBuses(List<string> NaptanIds)
         {
-           
-            string space = " ";
+            var buses = new List<BusArrival>();
+            foreach(var naptan in NaptanIds)
+            {
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                var Client = new RestClient("https://api.tfl.gov.uk/StopPoint/" + naptan);
+                var request = new RestRequest("Arrivals", Method.GET);
+                var busArrivalsResponse = Client.Execute<List<BusArrival>>(request);
+                buses = buses.Concat(busArrivalsResponse.Data).ToList(); // concatenates seperate lists into one
+            }
+            return buses;
+        }
+
+        public void PrintResult(int UserNumberOfBuses, List<BusArrival> busList)
+        {
             var totalBuses = busList.Count;
             if (UserNumberOfBuses > totalBuses)
             {
                 UserNumberOfBuses = totalBuses;
-                Console.WriteLine("Sorry Bruv I will give you " + UserNumberOfBuses + " instead");    
+                Console.WriteLine("Sorry Bruv I will give you " + UserNumberOfBuses + " instead");
             }
 
-            List<BusArrivals> SortedList = busList.OrderBy(o => o.ExpectedArrival).ToList();
+            List<BusArrival> SortedList = busList.OrderBy(o => o.ExpectedArrival).ToList();
 
             for (int i = 0; i < UserNumberOfBuses; i++)
             {
-                Console.WriteLine("The following " + UserNumberOfBuses + SortedList.ElementAt(i).VehicleId + space + SortedList.ElementAt(i).ExpectedArrival.ToLocalTime().TimeOfDay);
+                Console.WriteLine("The following bus with the ID " + UserNumberOfBuses + SortedList.ElementAt(i).VehicleId + " will be arriving at " + SortedList.ElementAt(i).ExpectedArrival.ToLocalTime().TimeOfDay);
             }
             Console.ReadLine();
         }

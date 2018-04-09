@@ -25,41 +25,24 @@ namespace BusBoard.ConsoleApp
         //    Console.ReadLine();
         //}
 
-        public string GetLatitude(string postcode)
+        public LatLong GetLatLong(string postcode)
         {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             var Client = new RestClient("http://api.postcodes.io/");
             var request = new RestRequest("postcodes/" + postcode, Method.GET);
-            var getPostCodeData = Client.Execute<PostCodeAPIResponse>(request);
-            var userLatitude = getPostCodeData.Data.Result.Latitude;
-            Console.WriteLine(userLatitude);
-
-            return userLatitude;
-        }
-        public string GetLongitude(string postcode)
-        {
-            ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            var Client = new RestClient("http://api.postcodes.io/");
-            var request = new RestRequest("postcodes/" + postcode, Method.GET);
-            var getPostCodeData = Client.Execute<PostCodeAPIResponse>(request);
-            var userLatitude = getPostCodeData.Data.Result.Longitude;
-            Console.WriteLine(userLatitude);
-
-            return userLatitude;
+            var postCodeData = Client.Execute<PostCodeAPIResponse>(request);
+            return postCodeData.Data.Result;
         }
     }
-
 
     public class PostCodeAPIResponse
     {
-        public PostCode Result { get; set; }
+        public LatLong Result { get; set; }
     }
 
-    public class PostCode
+    public class LatLong
     {
-        public string Postcode { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
     }

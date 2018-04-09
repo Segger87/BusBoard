@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusBoard.ConsoleApp
 {
-    class BusArrivals
+    class BusArrival
     {
         public string VehicleId { get; set; }
         public DateTime ExpectedArrival { get; set; }
@@ -14,8 +11,23 @@ namespace BusBoard.ConsoleApp
 
     class BusPointId
     {
+        public List<StopPoint> StopPoints { get; set; }
         public string CentrePoint { get; set; }
-        public string StopPoints { get; set; }
+    }
+
+    class StopPoint
+    {
         public string NaptanId { get; set; }
+        public string CommonName { get; set; }
+        public double Distance { get; set; }
+
+        public List<LineGroup> LineGroup { get; set; }
+
+    }
+
+    class LineGroup
+    {
+        public string NaptanIdReference { get; set; }
     }
 }
+
