@@ -4,14 +4,58 @@
 }
 
 <h2>BusInfo</h2>
-
+ 
 <div class="row">
-    <p>The Following buses are coming up for you: </p>
-    @foreach (var busArrival in Model.BusArrivals)
+    <p class="aboutBuses">The Following buses are coming up for you: </p>
+    <div class="wrap">
+        @foreach (var busArrival in Model.BusArrivals)
     {
-        <p>
-            <span>@busArrival.VehicleId</span>
-            <span>@busArrival.ExpectedArrival</span>
-        </p>
-    }
+        <div class="result">
+            <div class="col-md-4">
+                <span class="busResult">Bus: @busArrival.VehicleId</span>
+            </div>
+            <div class="col-md-4">
+                <span class="busResult">Station: @busArrival.StationName</span>
+            </div>
+            <div class="glyphicon-bell col-md-4 eta">
+                <span class='busResult time'>ETA: @busArrival.ExpectedArrivalDisplay</span>
+                <button id="myBtn">More Info</button>
+            </div>
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <p>Some text in the Modal..</p>
+                </div>
+            </div>
+        </div>
+}
+    </div>
 </div>
+<script>
+    // Get the modal
+    var modal = document.getElementById('myModal');
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("myBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on the button, open the modal 
+    btn.onclick = function () {
+        modal.style.display = "block";
+        alert("hi");
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>

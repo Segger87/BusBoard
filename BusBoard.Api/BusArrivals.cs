@@ -7,6 +7,23 @@ namespace BusBoard.ConsoleApp
     {
         public string VehicleId { get; set; }
         public DateTime ExpectedArrival { get; set; }
+        public string StationName { get; set; }
+        public string ExpectedArrivalDisplay
+        {
+            get
+            {
+                var bill = ExpectedArrival.ToLocalTime().Subtract(DateTime.Now).Minutes;
+                return bill < 1 ? "Due" : bill.ToString() + " minutes"; //ternery statement is functionally equivalent to the below
+                //if (bill < 1)
+                //{
+                //    return "Due";
+                //}
+                //else
+                //{
+                //    return bill.ToString();
+                //}
+            }
+        }
     }
 
     public class BusPointId
@@ -25,7 +42,7 @@ namespace BusBoard.ConsoleApp
 
     }
 
-   public class LineGroup
+    public class LineGroup
     {
         public string NaptanIdReference { get; set; }
     }

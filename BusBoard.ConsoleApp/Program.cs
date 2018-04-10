@@ -7,7 +7,6 @@ namespace BusBoard.ConsoleApp
 {
     public class Program
     {
-
         static void Main(string[] args)
         {
             new Program().StartProgram();
@@ -20,14 +19,6 @@ namespace BusBoard.ConsoleApp
 
             Console.WriteLine("Please enter a postcode: ");
             var postcode = Console.ReadLine();
-
-            var userLatLong = postCodeApi.GetLatLong(postcode);
-
-            //var userBusStopInput = BusStopInput();
-            int userNumberOfBuses = NumberOfBusesInput();
-            var busList = apiCall.CallTflApi(userLatLong);
-            var naptanIds = apiCall.PrintStopPointId(busList);
-            var busArrivals = apiCall.GetUpComingBuses(naptanIds);
         }
 
         public List<BusArrival> CheckPostcodeRegEx(string postcode)
@@ -47,7 +38,6 @@ namespace BusBoard.ConsoleApp
         }
         public List<BusArrival> BusArrivalsFromPostcode(string postcode)
         {
-
                 var postCodeApi = new PostCodeAPI();
                 var apiCall = new APIcall();
                 var userLatLong = postCodeApi.GetLatLong(postcode);
@@ -83,7 +73,7 @@ namespace BusBoard.ConsoleApp
             {
                 Console.WriteLine("How many buses would you like to know are coming up?");
                 numberOfBusesInput = Console.ReadLine();
-            } while (!NumberOfBusesInputIsValid(numberOfBusesInput));
+            }   while (!NumberOfBusesInputIsValid(numberOfBusesInput));
             return int.Parse(numberOfBusesInput);
         }
 
@@ -98,7 +88,7 @@ namespace BusBoard.ConsoleApp
             {
                 // todo tell user its not a string
                 return false;
-            };
+            }
         }
     }
 }

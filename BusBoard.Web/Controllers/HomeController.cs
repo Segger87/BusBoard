@@ -21,11 +21,12 @@ namespace BusBoard.Web.Controllers
 
             var busArrivals = new Program().CheckPostcodeRegEx(selection.Postcode);
 
-            var info = new BusInfoDisplay(busArrivals);
-            if(info == null)
+            if (busArrivals == null)
             {
-                return View("Sorry"); 
+                return View("Error");
             }
+            var info = new BusInfoDisplay(busArrivals);
+          
             return View(info);
         }
 
